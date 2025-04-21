@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"fmt"
-	"os/exec"
 
+	"github.com/muhammednithal/db_Backup_Utility/pkg/restore"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,8 @@ var restoreCmd = &cobra.Command{
 You can specify the path to the backup file and the target database configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if dbType == "mysql" {
-			err := runMySQLRestore()
+			err := restore.RestoreMYSQL(host, port, user, password, dbName, input)
+
 			if err != nil {
 				fmt.Println("Restore failed:", err)
 			} else {
@@ -31,14 +32,7 @@ You can specify the path to the backup file and the target database configuratio
 	},
 }
 
-func runMySQLRestore() error {
-	restoreCmd := fmt.Sprintf("mysql -h %s -P %d -u %s -p%s %s < %s", host, port, user, password, dbName, input)
-	out, err := exec.Command("sh", "-c", restoreCmd).CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("restore error: %v, output: %s", err, string(out))
-	}
-	return nil
-}
+
 func init() {
 	rootCmd.AddCommand(restoreCmd)
 

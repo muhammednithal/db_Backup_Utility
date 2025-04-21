@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"fmt"
-	"os/exec"
 
+	"github.com/muhammednithal/db_Backup_Utility/pkg/backup"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +24,7 @@ var backupCmd = &cobra.Command{
 Supports options like output directory, compression, and custom filenames.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if dbType == "mysql" {
-			err := runMySQLBackup()
+			err := backup.BackupMySQL(host, port, user, password, dbName, output)
 			if err != nil {
 				fmt.Println("Backup failed:", err)
 			} else {
@@ -37,14 +37,7 @@ Supports options like output directory, compression, and custom filenames.`,
 }
 
 
-func runMySQLBackup() error {
-	cmdStr := fmt.Sprintf("mysqldump -h %s -P %d -u %s -p%s %s > %s", host, port, user, password, dbName, output)
-	outputBytes, err := exec.Command("sh", "-c", cmdStr).CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("mysqldump error: %v, output: %s", err, string(outputBytes))
-	}
-	return nil
-}
+
 
 
 func init() {
