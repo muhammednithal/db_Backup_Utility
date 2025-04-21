@@ -18,20 +18,26 @@ var restoreCmd = &cobra.Command{
 	Long: `Restores a database using a previously created backup file.
 You can specify the path to the backup file and the target database configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if dbType == "mysql" {
+		switch dbType {
+		case "mysql":
 			err := restore.RestoreMYSQL(host, port, user, password, dbName, input)
-
-			if err != nil {
-				fmt.Println("Restore failed:", err)
-			} else {
-				fmt.Println("Restore completed successfully.")
-			}
-		} else {
+			handleRestoreResult(err)
+		case "postgres":
+			err := restore.RestorePostgres(host, port, user, password, dbName, input)
+			handleRestoreResult(err)
+		default:
 			fmt.Printf("Unsupported database type: %s\n", dbType)
 		}
 	},
 }
 
+func handleRestoreResult(err error) {
+	if err != nil {
+		fmt.Println("Restore failed:", err)
+	} else {
+		fmt.Println("Restore completed successfully.")
+	}
+}
 
 func init() {
 	rootCmd.AddCommand(restoreCmd)

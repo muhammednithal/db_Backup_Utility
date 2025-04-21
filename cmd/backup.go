@@ -23,20 +23,26 @@ var backupCmd = &cobra.Command{
 	Long: `Creates a backup of the configured database and stores it in the specified location.
 Supports options like output directory, compression, and custom filenames.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if dbType == "mysql" {
+		switch dbType {
+		case "mysql":
 			err := backup.BackupMySQL(host, port, user, password, dbName, output)
-			if err != nil {
-				fmt.Println("Backup failed:", err)
-			} else {
-				fmt.Println("Backup completed successfully.")
-			}
-		} else {
+			handleBackupResult(err)
+		case "postgres":
+			err := backup.BackupPostgres(host, port, user, password, dbName, output)
+			handleBackupResult(err)
+		default:
 			fmt.Printf("Unsupported database type: %s\n", dbType)
 		}
 	},
 }
 
-
+func handleBackupResult(err error) {
+	if err != nil {
+		fmt.Println("Backup failed:", err)
+	} else {
+		fmt.Println("Backup completed successfully.")
+	}
+}
 
 
 
