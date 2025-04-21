@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -13,13 +12,9 @@ import (
 // testConnectionCmd represents the testConnection command
 var testConnectionCmd = &cobra.Command{
 	Use:   "testConnection",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Test database connection settings",
+	Long: `Verifies the current database connection configuration.
+This is helpful for troubleshooting and ensuring that dbtool can communicate with the target database.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("testConnection called")
 	},

@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -13,13 +12,9 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Manage dbtool configuration settings",
+	Long: `Allows you to view, edit, or reset dbtool's configuration file.
+This includes database connection settings, backup locations, and other preferences.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("config called")
 	},
