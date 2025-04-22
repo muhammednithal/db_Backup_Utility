@@ -14,6 +14,7 @@ import (
 )
 
 const configFilePath = "config.json"
+var deleteVariant string
 
 type DBConfig struct {
 	DBType string `json:"dbType"`
@@ -30,6 +31,24 @@ var configCmd = &cobra.Command{
 	Long: `Allows you to view, edit, or reset dbtool's configuration file.
 This includes database connection settings, backup locations, and other preferences.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if deleteVariant != "" {
+			configMap := loadConfigFile()
+			if _, ok := configMap[deleteVariant]; !ok {
+				fmt.Println(" No config found with variant name:", deleteVariant)
+				return
+			}
+	
+			delete(configMap, deleteVariant)
+			data, _ := json.MarshalIndent(configMap, "", "  ")
+			err := os.WriteFile(configFilePath, data, 0644)
+			if err != nil {
+				fmt.Println("Failed to delete config:", err)
+				return
+			}
+	
+			fmt.Println("Config variant deleted:", deleteVariant)
+			return
+		}
 		var qs = []*survey.Question{
 			{
 				Name: "dbType",
@@ -119,6 +138,7 @@ func loadConfigFile() map[string]DBConfig {
 }
 func init() {
 	rootCmd.AddCommand(configCmd)
+	configCmd.Flags().StringVar(&deleteVariant, "delete", "", "Delete a saved config variant by name")
 
 	// Here you will define your flags and configuration settings.
 
