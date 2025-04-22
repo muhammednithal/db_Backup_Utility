@@ -22,24 +22,19 @@ Supports options like output directory, compression, and custom filenames.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Mode 3: Saved Config
 		if savedConfig != "" {
-			// Fetch config logic (mock for now)
-			config := map[string]string{
-				"dbType": "mysql",
-				"host":   "localhost",
-				"port":   "3306",
-				"user":   "root",
-				"dbName": "mydb",
-				"output": "backup_from_saved.sql",
+			configs := loadConfigFile()
+			config, ok := configs[savedConfig]
+			if !ok {
+				fmt.Println(" No saved config found with name:", savedConfig)
+				return
 			}
-
-			// Prompt for password only
+		
 			survey.AskOne(&survey.Password{Message: "Enter database password:"}, &password, survey.WithValidator(survey.Required))
-
-			portInt, _ := strconv.Atoi(config["port"])
-
-			dispatchBackup(config["dbType"], config["host"], portInt, config["user"], password, config["dbName"], config["output"])
+		
+			dispatchBackup(config.DBType, config.Host, config.Port, config.User, password, config.DBName, config.Output)
 			return
 		}
+		
 
 		// Mode 1: If required flags are set (non-zero), use them directly
 		flagUsed := cmd.Flags().Changed("type") || cmd.Flags().Changed("host") || cmd.Flags().Changed("user") ||
@@ -132,9 +127,9 @@ func dispatchBackup(dbType, host string, port int, user, password, dbName, outpu
 
 func handleBackupResult(err error) {
 	if err != nil {
-		fmt.Println("❌ Backup failed:", err)
+		fmt.Println(" Backup failed:", err)
 	} else {
-		fmt.Println("✅ Backup completed successfully.")
+		fmt.Println(" Backup completed successfully.")
 	}
 }
 
