@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	dbType, host, user, password, dbName, output, savedConfig string
+	dbType, host, user, password, dbName, output, savedConfig,input string
 	port                                                       int
 )
 
