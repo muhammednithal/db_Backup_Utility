@@ -7,6 +7,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/muhammednithal/db_Backup_Utility/pkg/backup"
 	configPkg "github.com/muhammednithal/db_Backup_Utility/pkg/config"
+	"github.com/muhammednithal/db_Backup_Utility/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -125,12 +126,30 @@ func dispatchBackup(dbType, host string, port int, user, password, dbName, outpu
 }
 
 func handleBackupResult(err error) {
+	status := "success"
+	errorMsg := ""
 	if err != nil {
+		status = "failure"
+		errorMsg = err.Error()
 		fmt.Println("Backup failed:", err)
 	} else {
 		fmt.Println("Backup completed successfully.")
 	}
+
+	logger.LogOperation(logger.LogEntry{
+		Action:      "backup",
+		DBType:      dbType,
+		Host:        host,
+		Port:        port,
+		User:        user,
+		Database:    dbName,
+		FilePath:    output,
+		Status:      status,
+		Error:       errorMsg,
+		SavedConfig: savedConfig,
+	})
 }
+
 
 func init() {
 	rootCmd.AddCommand(backupCmd)
