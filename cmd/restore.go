@@ -110,16 +110,16 @@ func dispatchRestore(dbType, host string, port int, user, password, dbName, inpu
 	switch dbType {
 	case "mysql":
 		err := restore.RestoreMYSQL(host, port, user, password, dbName, input)
-		handleRestoreResult(err)
+		handleRestoreResult(err, dbType, host, port, user, dbName, input)
 	case "postgres":
 		err := restore.RestorePostgres(host, port, user, password, dbName, input)
-		handleRestoreResult(err)
+		handleRestoreResult(err, dbType, host, port, user, dbName, input)
 	default:
 		fmt.Printf("Unsupported database type: %s\n", dbType)
 	}
 }
 
-func handleRestoreResult(err error) {
+func handleRestoreResult(err error,dbType, host string, port int, user, dbName, input string) {
 	status := "success"
 	errorMsg := ""
 	if err != nil {

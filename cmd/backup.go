@@ -116,16 +116,16 @@ func dispatchBackup(dbType, host string, port int, user, password, dbName, outpu
 	switch dbType {
 	case "mysql":
 		err := backup.BackupMySQL(host, port, user, password, dbName, output)
-		handleBackupResult(err)
+		handleBackupResult(err, dbType, host, port, user, dbName, output)
 	case "postgres":
 		err := backup.BackupPostgres(host, port, user, password, dbName, output)
-		handleBackupResult(err)
+		handleBackupResult(err, dbType, host, port, user, dbName, output)
 	default:
 		fmt.Printf("Unsupported database type: %s\n", dbType)
 	}
 }
 
-func handleBackupResult(err error) {
+func handleBackupResult(err error,dbType, host string, port int, user, dbName, output string) {
 	status := "success"
 	errorMsg := ""
 	if err != nil {

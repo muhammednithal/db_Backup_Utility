@@ -4,3 +4,6 @@
 {"timestamp":"2025-04-23T23:21:21+05:30","action":"restore","db_type":"mysql","host":"localhost","port":3306,"user":"root","database":"mydb","file_path":"output.sql","status":"failure","error":"restore error: exit status 1, output: sh: line 1: output.sql: No such file or directory\n"}
 {"timestamp":"2025-04-23T23:21:33+05:30","action":"restore","db_type":"mysql","host":"localhost","port":3306,"user":"root","database":"mydb","file_path":"backup.sql","status":"success"}
 {"timestamp":"2025-04-23T23:21:46+05:30","action":"restore","db_type":"mysql","host":"localhost","port":3306,"user":"root","database":"mydb","file_path":"backup.sql","status":"success"}
+{"timestamp":"2025-04-23T23:57:03+05:30","action":"backup","db_type":"","host":"localhost","port":3306,"user":"","database":"","file_path":"backup.sql","status":"success","saved_config":"test"}
+{"timestamp":"2025-04-24T00:08:53+05:30","action":"backup","db_type":"mysql","host":"localhost","port":3306,"user":"root","database":"mydb","file_path":"backup.sql","status":"success","saved_config":"test"}
+{"timestamp":"2025-04-24T00:14:02+05:30","action":"restore","db_type":"mysql","host":"localhost","port":3306,"user":"root","database":"mydb","file_path":"backup.sql","status":"success","saved_config":"test"}
