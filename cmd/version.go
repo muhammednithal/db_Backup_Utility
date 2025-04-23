@@ -16,7 +16,7 @@ var versionCmd = &cobra.Command{
 	Long: `Displays the current version of the db_Backup_Utility CLI utility.
 This is useful for verifying the installed version when reporting bugs or checking for updates.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("version called")
+		fmt.Println("v1.1")
 	},
 }
 

@@ -1,55 +1,41 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/AlecAivazis/survey/v2"
+	cfg "github.com/muhammednithal/db_Backup_Utility/pkg/config"
 	"github.com/spf13/cobra"
 )
 
-const configFilePath = "config.json"
 var deleteVariant string
 
-type DBConfig struct {
-	DBType string `json:"dbType"`
-	Host   string `json:"host"`
-	Port   int    `json:"port"`
-	User   string `json:"user"`
-	DBName string `json:"dbName"`
-	Output string `json:"output"`
-}
-// configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Manage dbtool configuration settings",
-	Long: `Allows you to view, edit, or reset dbtool's configuration file.
-This includes database connection settings, backup locations, and other preferences.`,
+	Long:  `View, edit, delete, or create new configuration variants.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if deleteVariant != "" {
-			configMap := loadConfigFile()
-			if _, ok := configMap[deleteVariant]; !ok {
-				fmt.Println(" No config found with variant name:", deleteVariant)
-				return
+			if err := cfg.DeleteConfig(deleteVariant); err != nil {
+				fmt.Println("Error deleting config:", err)
+			} else {
+				fmt.Println("Deleted config variant:", deleteVariant)
 			}
-	
-			delete(configMap, deleteVariant)
-			data, _ := json.MarshalIndent(configMap, "", "  ")
-			err := os.WriteFile(configFilePath, data, 0644)
-			if err != nil {
-				fmt.Println("Failed to delete config:", err)
-				return
-			}
-	
-			fmt.Println("Config variant deleted:", deleteVariant)
 			return
 		}
-		var qs = []*survey.Question{
+
+		// Prompt for new config
+		var answers struct {
+			DBType string `survey:"dbType"`
+			Host   string `survey:"host"`
+			Port   string `survey:"port"`
+			User   string `survey:"user"`
+			DBName string `survey:"dbName"`
+			Output string `survey:"output"`
+		}
+
+		qs := []*survey.Question{
 			{
 				Name: "dbType",
 				Prompt: &survey.Select{
@@ -85,68 +71,33 @@ This includes database connection settings, backup locations, and other preferen
 			},
 		}
 
-		answers := struct {
-			DBType string `survey:"dbType"`
-			Host   string `survey:"host"`
-			Port   string `survey:"port"`
-			User   string `survey:"user"`
-			DBName string `survey:"dbName"`
-			Output string `survey:"output"`
-		}{}
-
 		if err := survey.Ask(qs, &answers); err != nil {
 			fmt.Println("Prompt failed:", err)
 			return
 		}
 
 		var variantName string
-		survey.AskOne(&survey.Input{
-			Message: "Config variant name:",
-		}, &variantName, survey.WithValidator(survey.Required))
+		survey.AskOne(&survey.Input{Message: "Config variant name:"}, &variantName, survey.WithValidator(survey.Required))
 
 		portInt, _ := strconv.Atoi(answers.Port)
 
-		newConfig := DBConfig{
+		err := cfg.SaveVariant(variantName, cfg.DBConfig{
 			DBType: answers.DBType,
 			Host:   answers.Host,
 			Port:   portInt,
 			User:   answers.User,
 			DBName: answers.DBName,
 			Output: answers.Output,
+		})
+		if err != nil {
+			fmt.Println("Failed to save config:", err)
+		} else {
+			fmt.Println("Config saved as:", variantName)
 		}
-
-		configMap := loadConfigFile()
-		configMap[variantName] = newConfig
-
-		data, _ := json.MarshalIndent(configMap, "", "  ")
-		os.WriteFile(configFilePath, data, 0644)
-
-		fmt.Println("Configuration saved under variant:", variantName)
 	},
 }
 
-func loadConfigFile() map[string]DBConfig {
-	configMap := make(map[string]DBConfig)
-
-	if _, err := os.Stat(configFilePath); err == nil {
-		data, err := os.ReadFile(configFilePath)
-		if err == nil {
-			json.Unmarshal(data, &configMap)
-		}
-	}
-	return configMap
-}
 func init() {
 	rootCmd.AddCommand(configCmd)
 	configCmd.Flags().StringVar(&deleteVariant, "delete", "", "Delete a saved config variant by name")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
