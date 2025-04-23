@@ -6,6 +6,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	configPkg "github.com/muhammednithal/db_Backup_Utility/pkg/config"
+	"github.com/muhammednithal/db_Backup_Utility/pkg/logger"
 	"github.com/muhammednithal/db_Backup_Utility/pkg/restore"
 	"github.com/spf13/cobra"
 )
@@ -119,12 +120,30 @@ func dispatchRestore(dbType, host string, port int, user, password, dbName, inpu
 }
 
 func handleRestoreResult(err error) {
+	status := "success"
+	errorMsg := ""
 	if err != nil {
+		status = "failure"
+		errorMsg = err.Error()
 		fmt.Println("Restore failed:", err)
 	} else {
 		fmt.Println("Restore completed successfully.")
 	}
+
+	logger.LogOperation(logger.LogEntry{
+		Action:      "restore",
+		DBType:      dbType,
+		Host:        host,
+		Port:        port,
+		User:        user,
+		Database:    dbName,
+		FilePath:    input,
+		Status:      status,
+		Error:       errorMsg,
+		SavedConfig: savedConfig,
+	})
 }
+
 
 func init() {
 	rootCmd.AddCommand(restoreCmd)
