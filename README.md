@@ -10,9 +10,17 @@
 - Structured logging of operations (success/failure)
 - Cron-based scheduling support
 - Discord Notification for backup & restore status
-- Advanced backup options (e.g., incremental backups, compression)
 
 ---
+
+## Prerequisites
+
+Before using `dbBackupUtility`, ensure you have the following installed and accessible in your system's PATH:
+
+1.  **Go:** Required for building the utility. (Version 1.18+ recommended).
+2.  **Database Command-Line Tools:**
+    - For **MySQL:** `mysqldump` (for backups) and `mysql` (for restores).
+    - For **PostgreSQL:** `pg_dump` (for backups) and `pg_restore` (for restores).
 
 ## Installation
 
@@ -60,7 +68,7 @@ You can perform database backups and restores in 3 ways:
 ./db_Backup_Utility backup
 ```
 
-simillar for restore also
+simillar for restore .
 
 ### Configuration
 
@@ -79,17 +87,11 @@ simillar for restore also
 ## Logging
 
 Every backup or restore operation is logged with:
-
 Action (backup or restore)
-
 DB type, host, port, and database name
-
 File path used
-
 Status (success or failure)
-
 Timestamp and optional error message
-
 Logs are stored locally (logs/operations.log)
 
 ## Feature Roadmap
@@ -99,3 +101,5 @@ Logs are stored locally (logs/operations.log)
 • Add support for additional database systems (e.g., SQLite, MongoDB)
 
 • Implement encryption for backup files
+
+• Advanced backup options (e.g., incremental backups, compression)
